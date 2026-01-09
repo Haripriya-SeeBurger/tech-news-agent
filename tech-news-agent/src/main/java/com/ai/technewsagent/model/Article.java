@@ -13,6 +13,7 @@ public class Article
     private String title;
     private String link;
     private String source;
+    private String summary;
 
     public Article(String title, String link, String source) {
         this.title = title;
@@ -30,6 +31,14 @@ public class Article
 
     public String getSource() {
         return source;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 }
 

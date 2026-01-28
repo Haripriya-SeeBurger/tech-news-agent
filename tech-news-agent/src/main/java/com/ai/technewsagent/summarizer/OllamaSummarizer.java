@@ -15,13 +15,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.ai.technewsagent.model.OllamaRequest;
+import com.ai.technewsagent.model.OllamaResponse;
+
 
 @Component
 public class OllamaSummarizer implements NewsSummarizer
 {
     private static final String OLLAMA_URL = "http://127.0.0.1:11434/api/generate";
     private static final String MODEL_NAME = "phi3";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public OllamaSummarizer(RestTemplate restTemplate)
+    {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public String summarize(String title)
@@ -30,29 +38,26 @@ public class OllamaSummarizer implements NewsSummarizer
         {
             String prompt = "Summarize this tech news headline in one sentence:\n" + title;
 
-            String requestBody = """
-                            {
-                              "model": "%s",
-                              "prompt": "%s",
-                              "stream": false
-                            }
-                            """.formatted(
-                                          MODEL_NAME,
-                                          escapeJson(prompt));
+            OllamaRequest requestBody = new OllamaRequest(MODEL_NAME, prompt, false);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+            HttpEntity<OllamaRequest> request = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(OLLAMA_URL, request, String.class);
+            ResponseEntity<OllamaResponse> response = restTemplate.postForEntity(OLLAMA_URL, request, OllamaResponse.class);
 
-            return extractSummary(response.getBody());
+            return response.getBody() != null
+                            ? response.getBody().getResponse().trim()
+                            : "No response from LLM";
+
+           // return extractSummary(response.getBody());
 
         }
         catch (Exception e)
         {
-            return "AI summary unavailable (Ollama not reachable)";
+            e.printStackTrace(); // TEMP
+            return "AI summary unavailable (Ollama error)";
         }
     }
 

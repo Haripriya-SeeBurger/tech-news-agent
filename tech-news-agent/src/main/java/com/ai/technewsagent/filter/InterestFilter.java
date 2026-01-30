@@ -20,14 +20,7 @@ import com.ai.technewsagent.model.Article;
 @Component
 public class InterestFilter
 {
-    private static final Set<String> INTEREST_KEYWORDS = Set.of(
-                                                                "java",
-                                                                "spring",
-                                                                "backend",
-                                                                "integration",
-                                                                "api",
-                                                                "ai",
-                                                                "developer");
+    private static final Set<String> INTEREST_KEYWORDS = Set.of("java", "spring", "backend", "integration", "api", "ai", "developer");
 
     public List<Article> filter(List<Article> articles)
     {
@@ -41,7 +34,6 @@ public class InterestFilter
     {
         String title = article.getTitle().toLowerCase();
 
-        return INTEREST_KEYWORDS.stream()
-                                .anyMatch(title::contains);
+        return INTEREST_KEYWORDS.stream().anyMatch(title::contains);
     }
 }

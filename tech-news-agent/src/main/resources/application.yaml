@@ -1,6 +1,17 @@
 spring:
   application:
     name: tech-news-agent
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 80ee16b2950e74
+    password: ee54455e49034b
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 ollama:
   base-url: http://127.0.0.1:11434
